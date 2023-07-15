@@ -1,0 +1,24 @@
+<div class="suggestions-container">
+    <div class="d-flex align-items-center" style="gap: 20px;">
+        <h1 class="mb-4">My Journey</h1>
+        <button class="get-started-button" style="border-radius: 30px; font-weight: bold;box-shadow: 0px 2px 20px rgb();" routerLink="/suggestions-form">Go Back</button>
+    </div>
+    
+    <div *ngFor="let suggestion of mySuggestions" class="suggestion-item">
+        <div class="user-details-container">
+            <p><strong>Age: </strong>{{suggestion.age}}</p>
+            <p><strong>Height: </strong>{{suggestion.height}} cm</p>
+            <p><strong>Weight: </strong>{{suggestion.weight}} kg</p>
+        </div>
+      <p><strong>Suggestion:</strong> {{ suggestion.suggestion }}</p>
+      <p><strong>Timing:</strong> {{ suggestion.timing }}</p>
+      <p><strong>Calorie Intake:</strong> {{ suggestion.calorieIntake }}</p>
+      <p><strong>Weight Gain:</strong> {{ suggestion.weightGain }}</p>
+      <h4>Recommended Foods:</h4>
+      <ul>
+        <li *ngFor="let food of suggestion.foods">{{ food.name }} - {{ food.grams }}</li>
+      </ul>
+      <p><strong>Date: </strong>{{suggestion.date | date}}</p>
+    </div>
+  </div>
+  

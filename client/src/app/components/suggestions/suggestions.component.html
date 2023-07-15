@@ -1,0 +1,47 @@
+<div class="main-form-container">
+    <div class="form-container">
+        <div class="description">
+            <h2>Enter Your Details to Get Personalized Diet Suggestions</h2>
+            <p>Fill in the form with your age, height, and weight to receive customized diet recommendations tailored to your needs. Our advanced nutrition algorithm will analyze your information and provide you with a personalized diet plan to help you achieve your health and wellness goals.</p>
+            <p>Please ensure that you enter accurate details for accurate results. Consult with a healthcare professional before making any significant changes to your diet or exercise routine.</p>
+          </div>
+        <form [formGroup]="nutritionForm" (ngSubmit)="onSubmit()" class="form">
+          <div>
+            <label for="age">Age:</label>
+            <input placeholder="Ex:-20" type="number" id="age" formControlName="age" required>
+          </div>
+      
+          <div>
+            <label for="height">Height (cm):</label>
+            <input placeholder="Ex:-170" type="number" id="height" formControlName="height" required>
+          </div>
+      
+          <div>
+            <label for="weight">Weight (kg):</label>
+            <input placeholder="Ex:-60" type="number" id="weight" formControlName="weight" required>
+          </div>
+      
+          <button type="submit" class="mt-4 p-3" style="border-radius: 40px;" [disabled]="nutritionForm.invalid">Get Diet Suggestions</button>
+          <button routerLink="/" class="mt-4 p-3" style="border-radius: 40px;">Back to Home</button>
+        </form>
+    </div>
+    <div class="diet-suggestions" *ngIf="isLoading">
+        <h1 style="font-weight: bold;">Diet Suggestions</h1>
+        <div *ngIf="suggestions">
+          <p><strong>Suggestion:</strong> {{ suggestions.suggestion }}</p>
+          <p><strong>Timing:</strong> {{ suggestions.timing }}</p>
+          <p><strong>Calorie Intake:</strong> {{ suggestions.calorieIntake }}</p>
+          <p><strong>Weight Gain:</strong> {{ suggestions.weightGain }}</p>
+          <h4>Recommended Foods:</h4>
+          <ul>
+            <li *ngFor="let food of suggestions.foods">{{ food.name }} - {{ food.grams }}</li>
+          </ul>
+        </div>
+      </div>
+      
+      
+      
+      
+  </div>
+
+  
