@@ -68,12 +68,14 @@ app.get('/users', async (req, res) => {
 
 
 // Define the nutrition schema
-const suggestNutrition = (age, height, weight) => {
+const suggestNutrition = (age, height, weight, activityLevel) => {
     if (age >= 0 && age <= 12) {
         // Children (0-12 years)
         if (weight < height - 100) {
             const calorieIntake = 25 * weight;
-            const weightGain = height - weight;
+            const weightGain = (height - 100) - weight;
+            const caloriesToBurn = calorieIntake + (weightGain * 7000) / 7;
+
             return {
                 suggestion: "Increase calorie intake with a balanced diet including fruits, vegetables, whole grains, lean proteins, and dairy or dairy alternatives.",
                 timing: "3 meals and 2 snacks",
@@ -89,10 +91,13 @@ const suggestNutrition = (age, height, weight) => {
                 carbohydrateNeeds: "130-210g",
                 proteinNeeds: "13-34g",
                 fatPercentage: "30-40%",
+                caloriesToBurn,
             };
         } else {
             const calorieIntake = 20 * weight;
             const weightGain = 0;
+            const caloriesToBurn = calorieIntake;
+
             return {
                 suggestion: "Maintain a balanced diet with appropriate portion sizes, including fruits, vegetables, whole grains, lean proteins, and dairy or dairy alternatives.",
                 timing: "3 meals and 2 snacks",
@@ -108,13 +113,16 @@ const suggestNutrition = (age, height, weight) => {
                 carbohydrateNeeds: "130-210g",
                 proteinNeeds: "13-34g",
                 fatPercentage: "30-40%",
+                caloriesToBurn,
             };
         }
     } else if (age >= 13 && age <= 18) {
         // Teens (13-18 years)
         if (weight < height - 100) {
-            const calorieIntake = 20 * weight;
-            const weightGain = height - weight;
+            const calorieIntake = 25 * weight;
+            const weightGain = (height - 100) - weight;
+            const caloriesToBurn = calorieIntake + (weightGain * 7000) / 7;
+
             return {
                 suggestion: "Increase calorie intake to support growth and development. Focus on nutrient-dense foods and regular meals.",
                 timing: "3 meals and 2-3 snacks",
@@ -130,10 +138,13 @@ const suggestNutrition = (age, height, weight) => {
                 carbohydrateNeeds: "130-210g",
                 proteinNeeds: "45-75g",
                 fatPercentage: "25-35%",
+                caloriesToBurn,
             };
         } else {
             const calorieIntake = 25 * weight;
             const weightGain = 0;
+            const caloriesToBurn = calorieIntake;
+
             return {
                 suggestion: "Maintain a balanced diet with appropriate portion sizes to support growth and development. Include fruits, vegetables, whole grains, lean proteins, and dairy or dairy alternatives.",
                 timing: "3 meals and 2-3 snacks",
@@ -149,13 +160,16 @@ const suggestNutrition = (age, height, weight) => {
                 carbohydrateNeeds: "130-210g",
                 proteinNeeds: "45-75g",
                 fatPercentage: "25-35%",
+                caloriesToBurn,
             };
         }
     } else {
         // Adults (18+ years)
         if (weight < height - 100) {
-            const calorieIntake = 30 * weight;
-            const weightGain = height - weight;
+            const calorieIntake = 25 * weight;
+            const weightGain = (height - 100) - weight;
+            const caloriesToBurn = calorieIntake + (weightGain * 7000) / 7;
+
             return {
                 suggestion: "Increase calorie intake with a balanced diet including fruits, vegetables, whole grains, lean proteins, and healthy fats. Incorporate regular exercise.",
                 timing: "3 meals and 2 snacks",
@@ -171,10 +185,13 @@ const suggestNutrition = (age, height, weight) => {
                 carbohydrateNeeds: "130-210g",
                 proteinNeeds: "46-56g",
                 fatPercentage: "20-35%",
+                caloriesToBurn,
             };
         } else if (weight > height - 100) {
             const calorieIntake = 25 * weight;
             const weightGain = 0;
+            const caloriesToBurn = calorieIntake;
+
             return {
                 suggestion: "Focus on portion control, balanced diet, and regular exercise to support weight loss and maintain a healthy weight.",
                 timing: "3 meals and 2 snacks",
@@ -190,10 +207,13 @@ const suggestNutrition = (age, height, weight) => {
                 carbohydrateNeeds: "130-210g",
                 proteinNeeds: "46-56g",
                 fatPercentage: "20-35%",
+                caloriesToBurn,
             };
         } else {
             const calorieIntake = 25 * weight;
             const weightGain = 0;
+            const caloriesToBurn = calorieIntake;
+
             return {
                 suggestion: "Maintain a balanced diet with appropriate portion sizes, including fruits, vegetables, whole grains, lean proteins, and healthy fats. Incorporate regular exercise.",
                 timing: "3 meals and 2 snacks",
@@ -209,13 +229,15 @@ const suggestNutrition = (age, height, weight) => {
                 carbohydrateNeeds: "130-210g",
                 proteinNeeds: "46-56g",
                 fatPercentage: "20-35%",
+                caloriesToBurn,
             };
         }
     }
 };
+
 // API endpoint for suggesting nutrition
 app.get('/suggest-nutrition', (req, res) => {
-    const { age, height, weight } = req.query;
+    const { age, height, weight, activityLevel } = req.query;
 
     // Convert query parameters to numbers
     const parsedAge = parseInt(age);
@@ -228,36 +250,24 @@ app.get('/suggest-nutrition', (req, res) => {
     }
 
     // Call the suggestNutrition function
-    const suggestedNutrition = suggestNutrition(parsedAge, parsedHeight, parsedWeight);
+    const suggestedNutrition = suggestNutrition(parsedAge, parsedHeight, parsedWeight, activityLevel);
+
+    const heightInMeters = parsedHeight / 100; // Convert height from centimeters to meters
+    const bmi = parsedWeight / (heightInMeters * heightInMeters);
 
     // Return the suggested nutrition as a response
-    res.json(suggestedNutrition);
+    res.json({ suggestedNutrition, bmi });
 });
 
-// Create a new meal
-app.post('/api/meals', (req, res) => {
-    const { userId, foodIds, date } = req.body;
-    const meal = new models.Meal({
-        user: userId,
-        foods: foodIds,
-        date: date
-    });
-    meal.save()
-        .then(savedMeal => {
-            res.json({ message: 'Meal saved successfully', meal: savedMeal });
-        })
-        .catch(error => {
-            res.status(500).json({ error: 'Failed to save meal' });
-        });
-});
+
 
 
 // Define the API endpoint for saving suggestions
 app.post('/suggestions', async (req, res) => {
     try {
         //   // Extract the suggestion data from the request body
-        const { userId, age, height, weight, suggestions } = req.body;
-        const {  suggestion, timing, foods, calorieIntake, weightGain } = suggestions
+        const { userId, age, height, weight, suggestions, bmi } = req.body;
+        const { suggestion, timing, foods, calorieIntake, weightGain } = suggestions
 
         console.log(suggestions)
         // Create a new suggestion instance
@@ -269,9 +279,10 @@ app.post('/suggestions', async (req, res) => {
             suggestion,
             timing,
             foods,
+            bmi,
             calorieIntake,
             weightGain,
-            date:new Date()
+            date: new Date()
         });
 
         // Save the suggestion to the database
@@ -299,23 +310,29 @@ app.get('/suggestions', async (req, res) => {
 });
 
 
+app.delete('/suggestion/:id', async (req, res) => {
+    const id = req.params.id;
+  
+    try {
+      // Find the suggestion with the given id in the database and delete it
+      const deletedSuggestion = await models.Suggestion.findByIdAndDelete(id);
+  
+      if (!deletedSuggestion) {
+        return res.status(404).json({ message: 'Suggestion not found' });
+      }
+  
+      res.status(200).json({ message: 'Suggestion deleted successfully' });
+    } catch (error) {
+      console.error('Failed to delete suggestion:', error);
+      res.status(500).json({ message: 'Failed to delete suggestion' });
+    }
+  });
+  
 
-// Connect to MongoDB and start the server
-// mongoose
-//     .connect('mongodb+srv://nutritionassistant:nutritionassistant@cluster0.hbtv07f.mongodb.net/nutritionassistant?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
-//     .then(() => {
-//         app.listen(port, () => {
-//             console.log(`Server running at http://localhost:${port}`);
-//         });
-//     })
-//     .catch(error => {
-//         console.log(error);
-//         process.exit(1);
-//     });
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
-  });
-  
+});
+
 
 module.exports = app;

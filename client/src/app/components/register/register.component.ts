@@ -26,11 +26,19 @@ export class RegisterComponent {
   }
 
   onSubmit(details: { firstname: string, lastname: string, email: string, password: string }): void {
-    console.log(details);
     this.http.post('http://localhost:5100/register', details).subscribe(
-      (response: any) => {
-        alert('Registered Successfully!');
-        this.route.navigate(['/login']);
+      (res: any) => {
+        console.log(res)
+        if (res.text === 'Successfully Registered') {
+          window.alert('Registration Successful!');
+          
+        } else {
+          window.alert('Registration Failed!');
+        }
+      },
+      (error) => {
+        console.error(error);
+        window.alert('Registration Failed!');
       }
     );
   }

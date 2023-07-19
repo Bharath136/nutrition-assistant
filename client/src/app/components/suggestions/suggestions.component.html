@@ -22,7 +22,7 @@
           </div>
       
           <button type="submit" class="mt-4 p-3" style="border-radius: 40px;" [disabled]="nutritionForm.invalid">Get Diet Suggestions</button>
-          <button routerLink="/" class="mt-4 p-3" style="border-radius: 40px;">Back to Home</button>
+          <button routerLink="/" class="mt-4 p-3 bg-dark text-light" style="border-radius: 40px;">Back to Home</button>
         </form>
     </div>
     <div class="diet-suggestions" *ngIf="isLoading">
@@ -32,6 +32,8 @@
           <p><strong>Timing:</strong> {{ suggestions.timing }}</p>
           <p><strong>Calorie Intake:</strong> {{ suggestions.calorieIntake }}</p>
           <p><strong>Weight Gain:</strong> {{ suggestions.weightGain }}</p>
+          <p><strong>Carbohydrate Needs:</strong> {{ suggestions.carbohydrateNeeds }}</p>
+          <p><strong>Protien Needs:</strong> {{ suggestions.proteinNeeds }}</p>
           <h4>Recommended Foods:</h4>
           <ul>
             <li *ngFor="let food of suggestions.foods">{{ food.name }} - {{ food.grams }}</li>

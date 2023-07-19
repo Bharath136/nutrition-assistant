@@ -26,6 +26,7 @@ const suggestionSchema = new mongoose.Schema({
       name: { type: String, required: true },
       grams: { type: String, required: true }
     }],
+    bmi:{type:String,required: true},
     calorieIntake: { type: Number, required: true },
     weightGain: { type: Number, required: true },
     date: {type: Date, default: new Date()}

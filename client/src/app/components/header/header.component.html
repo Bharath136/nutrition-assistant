@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-light ">
-    <img src="https://previews.123rf.com/images/glopphy/glopphy1412/glopphy141200120/34980743-teamwork-meeting-people-logo-design-template-icon-vector.jpg"
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBQ80q792i4sOMkKQy1UNJnbLwqP_1VpZ1ZTRw5Gk&s"
         class="logo" alt="">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -13,8 +13,11 @@
             <li class="nav-item">
                 <a class="nav-link" routerLink="/my-previous-suggestions">TrackYourTrasformation</a>
             </li>
-            <li class="nav-item" style="cursor: pointer;">
+            <li class="nav-item" style="cursor: pointer;" *ngIf="isLoggedIn">
                 <a class="nav-link " (click)="onLogout()" >Logout</a>
+            </li>
+            <li class="nav-item" style="cursor: pointer;" *ngIf="!isLoggedIn">
+                <a class="nav-link " routerLink="/login" >SigUp/SignIn</a>
             </li>
         </ul>
     </div>

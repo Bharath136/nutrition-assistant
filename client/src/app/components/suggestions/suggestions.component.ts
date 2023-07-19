@@ -49,28 +49,37 @@ export class SuggestionsComponent {
   }
 
   getSuggestions(age: number, height: number, weight: number) {
-    const userId = localStorage.getItem('userId')
+    const userId = localStorage.getItem('userId');
     // Create an object with the query parameters
     const params = { age: age.toString(), height: height.toString(), weight: weight.toString() };
     // this.isLoading = true
     // Make the HTTP GET request with the query parameters
     this.http.get<any>('http://localhost:5100/suggest-nutrition', { params }).subscribe(
-      (suggestions: any) => {
-        console.log(suggestions);
-        this.suggestions = suggestions
-        this.isLoading = true
-        this.http.post('http://localhost:5100/suggestions', {userId,age,height,weight,suggestions}).subscribe((res) => {
-          console.log(res)
-        })
+      (res: any) => {
+        console.log(res.suggestedNutrition);
+        this.suggestions = res.suggestedNutrition;
+        console.log(res);
+        this.isLoading = true;
+        
+        const postBody = {
+          userId: userId,
+          age: age,
+          height: height,
+          weight: weight,
+          suggestions: res.suggestedNutrition,
+          bmi: res.bmi
+        };
+
+        this.http.post('http://localhost:5100/suggestions', postBody).subscribe((response) => {
+          console.log(response);
+        });
       },
       (error: any) => {
         console.error('Failed to fetch suggestions:', error);
-        this.isLoading = false
+        this.isLoading = false;
       }
     );
+}
 
-
-
-  }
 
 }

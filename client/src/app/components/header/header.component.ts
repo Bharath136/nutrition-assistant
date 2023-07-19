@@ -8,10 +8,18 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent {
 
-  constructor(private router:Router){}
+  isLoggedIn = false
+
+  constructor(private router:Router){
+    const token = localStorage.getItem('jwtToken')
+    if(token){
+      this.isLoggedIn = true
+    }
+  }
 
   onLogout(){
     localStorage.clear()
+    this.isLoggedIn = false
     this.router.navigate(['/login'])
   }
 }
